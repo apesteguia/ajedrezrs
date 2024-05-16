@@ -132,6 +132,17 @@ impl Tablero {
             TipoPieza::Reina => return Some(self.movimiento_reina()),
         };
     }
+
+    pub fn insertar_pieza(&mut self, p: Option<Pieza>, v: Vect2<usize>) {
+        match p {
+            Some(pieza) => {
+                self.piezas[v.x][v.y] =
+                    Some(Pieza::new(pieza.color.unwrap(), pieza.tipo.unwrap(), v))
+            }
+            None => self.piezas[v.x][v.y] = None,
+        }
+    }
+
     // Hacia arriba, Derecha
     // 0 1 -> Caballo blanco
     // 0 0 -> Torre blanco
@@ -144,21 +155,22 @@ impl Tablero {
                 if p.pos.x == 1 {
                     if self.piezas[p.pos.x + 1][p.pos.y].is_none() {
                         v.push(Vect2::new(p.pos.x + 1, p.pos.y));
+                        if self.piezas[p.pos.x + 2][p.pos.y].is_none() {
+                            v.push(Vect2::new(p.pos.x + 2, p.pos.y));
+                        } else {
+                            let pieza_adelante = &self.piezas[p.pos.x + 2][p.pos.y];
+                            if let Some(pieza) = pieza_adelante {
+                                if pieza.color.unwrap() == Color::Negras {
+                                    v.push(Vect2::new(p.pos.x + 2, p.pos.y));
+                                }
+                            }
+                        }
                     } else {
-                        let pieza_adelante = &self.piezas[p.pos.y + 1][p.pos.x];
+                        let pieza_adelante = &self.piezas[p.pos.x + 1][p.pos.y];
                         if let Some(pieza) = pieza_adelante {
                             if pieza.color.unwrap() == Color::Negras {
                                 v.push(Vect2::new(p.pos.x + 1, p.pos.y));
-                            }
-                        }
-                    }
-                    if self.piezas[p.pos.x + 2][p.pos.y].is_none() {
-                        v.push(Vect2::new(p.pos.x + 2, p.pos.y));
-                    } else {
-                        let pieza_adelante = &self.piezas[p.pos.y + 2][p.pos.x];
-                        if let Some(pieza) = pieza_adelante {
-                            if pieza.color.unwrap() == Color::Negras {
-                                v.push(Vect2::new(p.pos.x + 2, p.pos.y));
+                                return v;
                             }
                         }
                     }
@@ -167,7 +179,7 @@ impl Tablero {
                         if self.piezas[p.pos.x + 1][p.pos.y].is_none() {
                             v.push(Vect2::new(p.pos.x + 1, p.pos.y));
                         } else {
-                            let pieza_adelante = &self.piezas[p.pos.y + 1][p.pos.x];
+                            let pieza_adelante = &self.piezas[p.pos.x + 1][p.pos.y];
                             if let Some(pieza) = pieza_adelante {
                                 if pieza.color.unwrap() == Color::Negras {
                                     v.push(Vect2::new(p.pos.x + 1, p.pos.y));
@@ -180,35 +192,35 @@ impl Tablero {
 
             Color::Negras => {
                 if p.pos.x == 6 {
-                    // v.push(Vect2::new(p.pos.x - 1, 12312));
                     if self.piezas[p.pos.x - 1][p.pos.y].is_none() {
                         v.push(Vect2::new(p.pos.x - 1, p.pos.y));
-                    } else {
-                        let pieza_adelante = &self.piezas[p.pos.y - 1][p.pos.x];
-                        if let Some(pieza) = pieza_adelante {
-                            if pieza.color.unwrap() == Color::Negras {
-                                v.push(Vect2::new(p.pos.x - 1, p.pos.y));
+                        if self.piezas[p.pos.x - 2][p.pos.y].is_none() {
+                            v.push(Vect2::new(p.pos.x - 2, p.pos.y));
+                        } else {
+                            let pieza_adelante = &self.piezas[p.pos.x - 2][p.pos.y];
+                            if let Some(pieza) = pieza_adelante {
+                                if pieza.color.unwrap() == Color::Blancas {
+                                    v.push(Vect2::new(p.pos.x - 2, p.pos.y));
+                                }
                             }
                         }
-                    }
-                    if self.piezas[p.pos.x - 2][p.pos.y].is_none() {
-                        v.push(Vect2::new(p.pos.x - 2, p.pos.y));
                     } else {
-                        let pieza_adelante = &self.piezas[p.pos.y - 2][p.pos.x];
+                        let pieza_adelante = &self.piezas[p.pos.x - 1][p.pos.y];
                         if let Some(pieza) = pieza_adelante {
-                            if pieza.color.unwrap() == Color::Negras {
-                                v.push(Vect2::new(p.pos.x - 2, p.pos.y));
+                            if pieza.color.unwrap() == Color::Blancas {
+                                v.push(Vect2::new(p.pos.x - 1, p.pos.y));
+                                return v;
                             }
                         }
                     }
                 } else {
-                    if p.pos.x < 7 && p.pos.x > 0 {
+                    if p.pos.x < 6 && p.pos.x > 1 {
                         if self.piezas[p.pos.x - 1][p.pos.y].is_none() {
                             v.push(Vect2::new(p.pos.x - 1, p.pos.y));
                         } else {
-                            let pieza_adelante = &self.piezas[p.pos.y - 1][p.pos.x];
+                            let pieza_adelante = &self.piezas[p.pos.x - 1][p.pos.y];
                             if let Some(pieza) = pieza_adelante {
-                                if pieza.color.unwrap() == Color::Negras {
+                                if pieza.color.unwrap() == Color::Blancas {
                                     v.push(Vect2::new(p.pos.x - 1, p.pos.y));
                                 }
                             }

@@ -1,3 +1,4 @@
+use pieza::Pieza;
 use raylib::prelude::*;
 use vector2::Vect2;
 
@@ -16,7 +17,24 @@ fn main() {
         .size(SIZE, SIZE)
         .title("Hello, World")
         .build();
-    let tablero = tablero::Tablero::new();
+    let mut tablero = tablero::Tablero::new();
+    tablero.insertar_pieza(
+        Some(Pieza::new(
+            pieza::Color::Negras,
+            pieza::TipoPieza::Peon,
+            Vect2::new(2, 0),
+        )),
+        Vect2::new(2, 0),
+    );
+    tablero.insertar_pieza(
+        Some(Pieza::new(
+            pieza::Color::Blancas,
+            pieza::TipoPieza::Peon,
+            Vect2::new(5, 2),
+        )),
+        Vect2::new(5, 2),
+    );
+
     let mut movimientos: Vec<Vect2<usize>> = Vec::new();
 
     let images = load_images::Images::new(&mut rl, &thread);
@@ -24,18 +42,9 @@ fn main() {
     rl.set_target_fps(20);
 
     while !rl.window_should_close() {
-        // let pressed_key = rl.get_key_pressed();
         let mut d = rl.begin_drawing(&thread);
 
         d.clear_background(Color::WHITE);
-        // if Some(pressed_key) == KeyboardKey::KEY_Q {
-        //     movimientos = tablero.movimientos_posibles(Vect2::new(1, 2)).unwrap();
-        // }
-
-        // match pressed_key {
-        //     Some(_) => movimientos = tablero.movimientos_posibles(Vect2::new(6, 0)).unwrap(),
-        //     None => (),
-        // }
 
         let pos = d.get_mouse_position();
         // println!("{:?}", pos);
@@ -52,21 +61,17 @@ fn main() {
                 let b: Color;
                 if j % 2 == 0 {
                     if i % 2 == 0 {
-                        // c = Color::BLACK;
                         c = my_black;
                         b = Color::WHITE;
                     } else {
                         c = Color::WHITE;
-                        // b = Color::BLACK;
                         b = my_black;
                     }
                 } else {
                     if i % 2 == 0 {
                         c = Color::WHITE;
-                        // b = Color::BLACK;
                         b = my_black;
                     } else {
-                        // c = Color::BLACK;
                         c = my_black;
                         b = Color::WHITE;
                     }
@@ -76,7 +81,14 @@ fn main() {
                     // horizontal
                     Some(pieza) => {
                         let _f = format!("{:?}", pieza.tipo);
-                        d.draw_rectangle(i as i32 * DIM, j as i32 * DIM, DIM, DIM, b);
+                        let ij = Vect2::new(j, i);
+                        let x = movimientos.iter().any(|&f| f.igual(ij));
+                        println!("{:?}", movimientos);
+                        if x {
+                            d.draw_rectangle(i as i32 * DIM, j as i32 * DIM, DIM, DIM, Color::RED);
+                        } else {
+                            d.draw_rectangle(i as i32 * DIM, j as i32 * DIM, DIM, DIM, b);
+                        }
                         d.draw_text(
                             &format!("{}{}", pieza.pos.x, pieza.pos.y),
                             i as i32 * DIM,
