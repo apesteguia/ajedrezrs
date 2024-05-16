@@ -21,10 +21,10 @@ fn main() {
 
     let images = load_images::Images::new(&mut rl, &thread);
     let my_black = Color::new(70, 70, 70, 255);
-    rl.set_target_fps(5);
+    rl.set_target_fps(20);
 
     while !rl.window_should_close() {
-        let pressed_key = rl.get_key_pressed();
+        // let pressed_key = rl.get_key_pressed();
         let mut d = rl.begin_drawing(&thread);
 
         d.clear_background(Color::WHITE);
@@ -32,9 +32,18 @@ fn main() {
         //     movimientos = tablero.movimientos_posibles(Vect2::new(1, 2)).unwrap();
         // }
 
-        match pressed_key {
-            Some(_) => movimientos = tablero.movimientos_posibles(Vect2::new(6, 0)).unwrap(),
-            None => (),
+        // match pressed_key {
+        //     Some(_) => movimientos = tablero.movimientos_posibles(Vect2::new(6, 0)).unwrap(),
+        //     None => (),
+        // }
+
+        let pos = d.get_mouse_position();
+        // println!("{:?}", pos);
+        let down = d.is_mouse_button_released(raylib::consts::MouseButton::MOUSE_LEFT_BUTTON);
+        if down {
+            let col = check_collision(pos);
+            println!("{:?}", col);
+            movimientos = tablero.movimientos_posibles(col).unwrap();
         }
 
         for i in 0..N {
@@ -185,4 +194,13 @@ fn main() {
             }
         }
     }
+}
+
+fn check_collision(v: Vector2) -> Vect2<usize> {
+    let mut result = Vect2 { x: 0, y: 0 };
+
+    result.x = (v.y / 100.0) as usize;
+    result.y = (v.x / 100.0) as usize;
+
+    result
 }
