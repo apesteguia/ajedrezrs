@@ -36,10 +36,10 @@ fn main() {
     );
 
     let mut movimientos: Vec<Vect2<usize>> = Vec::new();
-
     let images = load_images::Images::new(&mut rl, &thread);
     let my_black = Color::new(70, 70, 70, 255);
     rl.set_target_fps(20);
+    let mut seleccionado: Vect2<usize> = Vect2::new(0, 0);
 
     while !rl.window_should_close() {
         let mut d = rl.begin_drawing(&thread);
@@ -48,11 +48,22 @@ fn main() {
 
         let pos = d.get_mouse_position();
         // println!("{:?}", pos);
-        let down = d.is_mouse_button_released(raylib::consts::MouseButton::MOUSE_LEFT_BUTTON);
+        let down = d.is_mouse_button_pressed(raylib::consts::MouseButton::MOUSE_LEFT_BUTTON);
+
         if down {
             let col = check_collision(pos);
-            println!("{:?}", col);
-            movimientos = tablero.movimientos_posibles(col).unwrap();
+            if !movimientos.is_empty() {
+                let yy = movimientos.iter().any(|&f| f.igual(col));
+                if yy {
+                    let piz = tablero.piezas[seleccionado.x][seleccionado.y];
+                    tablero.insertar_pieza(piz, col);
+                }
+            } else {
+                if tablero.piezas[col.x][col.y].unwrap().color.unwrap() == tablero.turno {
+                    movimientos = tablero.movimientos_posibles(col).unwrap();
+                }
+            }
+            seleccionado = col;
         }
 
         for i in 0..N {
@@ -83,7 +94,7 @@ fn main() {
                         let _f = format!("{:?}", pieza.tipo);
                         let ij = Vect2::new(j, i);
                         let x = movimientos.iter().any(|&f| f.igual(ij));
-                        println!("{:?}", movimientos);
+                        // println!("{:?}", movimientos);
                         if x {
                             d.draw_rectangle(i as i32 * DIM, j as i32 * DIM, DIM, DIM, Color::RED);
                         } else {

@@ -84,7 +84,7 @@ impl Tablero {
                 TipoPieza::Reina,
                 Vect2::new(N - 1, 3),
             )),
-            Some(Pieza::new(Color::Blancas, TipoPieza::Rey, Vect2::new(0, 4))),
+            Some(Pieza::new(Color::Negras, TipoPieza::Rey, Vect2::new(0, 4))),
             Some(Pieza::new(
                 Color::Negras,
                 TipoPieza::Alfil,
@@ -136,6 +136,7 @@ impl Tablero {
     pub fn insertar_pieza(&mut self, p: Option<Pieza>, v: Vect2<usize>) {
         match p {
             Some(pieza) => {
+                self.piezas[pieza.pos.x][pieza.pos.x] = None;
                 self.piezas[v.x][v.y] =
                     Some(Pieza::new(pieza.color.unwrap(), pieza.tipo.unwrap(), v))
             }
