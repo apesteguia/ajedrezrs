@@ -1,4 +1,5 @@
 use raylib::prelude::*;
+use vector2::Vect2;
 
 pub mod load_images;
 pub mod pieza;
@@ -16,15 +17,26 @@ fn main() {
         .title("Hello, World")
         .build();
     let tablero = tablero::Tablero::new();
+    let mut movimientos: Vec<Vect2<usize>> = Vec::new();
 
     let images = load_images::Images::new(&mut rl, &thread);
     let my_black = Color::new(70, 70, 70, 255);
     rl.set_target_fps(5);
 
     while !rl.window_should_close() {
+        let pressed_key = rl.get_key_pressed();
         let mut d = rl.begin_drawing(&thread);
 
         d.clear_background(Color::WHITE);
+        // if Some(pressed_key) == KeyboardKey::KEY_Q {
+        //     movimientos = tablero.movimientos_posibles(Vect2::new(1, 2)).unwrap();
+        // }
+
+        match pressed_key {
+            Some(_) => movimientos = tablero.movimientos_posibles(Vect2::new(6, 0)).unwrap(),
+            None => (),
+        }
+
         for i in 0..N {
             for j in 0..N {
                 let c: Color;
@@ -56,7 +68,13 @@ fn main() {
                     Some(pieza) => {
                         let _f = format!("{:?}", pieza.tipo);
                         d.draw_rectangle(i as i32 * DIM, j as i32 * DIM, DIM, DIM, b);
-                        d.draw_text(&format!("{}{}", i, j), i as i32 * DIM, j as i32 * DIM, 5, c);
+                        d.draw_text(
+                            &format!("{}{}", pieza.pos.x, pieza.pos.y),
+                            i as i32 * DIM,
+                            j as i32 * DIM,
+                            5,
+                            c,
+                        );
                         if pieza.color.unwrap() == pieza::Color::Negras {
                             match pieza.tipo {
                                 Some(tipo) => match tipo {
@@ -148,7 +166,13 @@ fn main() {
                         // d.draw_text(&f, i as i32 * DIM, j as i32 * DIM, 5, c);
                     }
                     None => {
-                        d.draw_rectangle(i as i32 * DIM, j as i32 * DIM, DIM, DIM, b);
+                        let ij = Vect2::new(j, i);
+                        let x = movimientos.iter().any(|&f| f.igual(ij));
+                        if x {
+                            d.draw_rectangle(i as i32 * DIM, j as i32 * DIM, DIM, DIM, Color::RED);
+                        } else {
+                            d.draw_rectangle(i as i32 * DIM, j as i32 * DIM, DIM, DIM, b);
+                        }
                         d.draw_text(
                             &format!("Vacia {}{}", i, j),
                             i as i32 * DIM,
