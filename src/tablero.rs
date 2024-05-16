@@ -65,49 +65,45 @@ impl Tablero {
 
         piezas[N - 1] = [
             Some(Pieza::new(
-                Color::Blancas,
+                Color::Negras,
                 TipoPieza::Torre,
                 Vect2::new(N - 1, 0),
             )),
             Some(Pieza::new(
-                Color::Blancas,
+                Color::Negras,
                 TipoPieza::Caballo,
                 Vect2::new(N - 1, 1),
             )),
             Some(Pieza::new(
-                Color::Blancas,
+                Color::Negras,
                 TipoPieza::Alfil,
                 Vect2::new(N - 1, 2),
             )),
             Some(Pieza::new(
-                Color::Blancas,
+                Color::Negras,
                 TipoPieza::Reina,
                 Vect2::new(N - 1, 3),
             )),
             Some(Pieza::new(Color::Blancas, TipoPieza::Rey, Vect2::new(0, 4))),
             Some(Pieza::new(
-                Color::Blancas,
+                Color::Negras,
                 TipoPieza::Alfil,
                 Vect2::new(N - 1, 5),
             )),
             Some(Pieza::new(
-                Color::Blancas,
+                Color::Negras,
                 TipoPieza::Caballo,
                 Vect2::new(N - 1, 6),
             )),
             Some(Pieza::new(
-                Color::Blancas,
+                Color::Negras,
                 TipoPieza::Torre,
                 Vect2::new(N - 1, 7),
             )),
         ];
 
         for i in 0..N {
-            piezas[6][i] = Some(Pieza::new(
-                Color::Blancas,
-                TipoPieza::Peon,
-                Vect2::new(1, i),
-            ));
+            piezas[6][i] = Some(Pieza::new(Color::Negras, TipoPieza::Peon, Vect2::new(1, i)));
         }
 
         Self {

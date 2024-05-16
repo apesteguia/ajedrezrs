@@ -1,5 +1,6 @@
 use raylib::prelude::*;
 
+pub mod load_images;
 pub mod pieza;
 pub mod tablero;
 pub mod vector2;
@@ -7,6 +8,7 @@ pub mod vector2;
 const SIZE: i32 = 800;
 const N: usize = 8;
 const DIM: i32 = SIZE / N as i32;
+const POS: i32 = DIM;
 
 fn main() {
     let (mut rl, thread) = raylib::init()
@@ -14,6 +16,10 @@ fn main() {
         .title("Hello, World")
         .build();
     let tablero = tablero::Tablero::new();
+
+    let images = load_images::Images::new(&mut rl, &thread);
+    let my_black = Color::new(70, 70, 70, 255);
+    rl.set_target_fps(5);
 
     while !rl.window_should_close() {
         let mut d = rl.begin_drawing(&thread);
@@ -25,18 +31,22 @@ fn main() {
                 let b: Color;
                 if j % 2 == 0 {
                     if i % 2 == 0 {
-                        c = Color::BLACK;
+                        // c = Color::BLACK;
+                        c = my_black;
                         b = Color::WHITE;
                     } else {
                         c = Color::WHITE;
-                        b = Color::BLACK;
+                        // b = Color::BLACK;
+                        b = my_black;
                     }
                 } else {
                     if i % 2 == 0 {
                         c = Color::WHITE;
-                        b = Color::BLACK;
+                        // b = Color::BLACK;
+                        b = my_black;
                     } else {
-                        c = Color::BLACK;
+                        // c = Color::BLACK;
+                        c = my_black;
                         b = Color::WHITE;
                     }
                 }
@@ -44,13 +54,108 @@ fn main() {
                     // Camiar porque sino esta el tablero en direccion
                     // horizontal
                     Some(pieza) => {
-                        let f = format!("{:?}", pieza.tipo);
+                        let _f = format!("{:?}", pieza.tipo);
                         d.draw_rectangle(i as i32 * DIM, j as i32 * DIM, DIM, DIM, b);
-                        d.draw_text(&f, i as i32 * DIM, j as i32 * DIM, 5, c);
+                        d.draw_text(&format!("{}{}", i, j), i as i32 * DIM, j as i32 * DIM, 5, c);
+                        if pieza.color.unwrap() == pieza::Color::Negras {
+                            match pieza.tipo {
+                                Some(tipo) => match tipo {
+                                    pieza::TipoPieza::Peon => d.draw_texture(
+                                        &images.textures[6],
+                                        i as i32 * POS,
+                                        j as i32 * POS,
+                                        Color::WHITE,
+                                    ),
+                                    pieza::TipoPieza::Alfil => d.draw_texture(
+                                        &images.textures[7],
+                                        i as i32 * POS,
+                                        j as i32 * POS,
+                                        Color::WHITE,
+                                    ),
+                                    pieza::TipoPieza::Caballo => d.draw_texture(
+                                        &images.textures[8],
+                                        i as i32 * POS,
+                                        j as i32 * POS,
+                                        Color::WHITE,
+                                    ),
+                                    pieza::TipoPieza::Torre => d.draw_texture(
+                                        &images.textures[9],
+                                        i as i32 * POS,
+                                        j as i32 * POS,
+                                        Color::WHITE,
+                                    ),
+                                    pieza::TipoPieza::Rey => d.draw_texture(
+                                        &images.textures[10],
+                                        i as i32 * POS,
+                                        j as i32 * POS,
+                                        Color::WHITE,
+                                    ),
+                                    pieza::TipoPieza::Reina => d.draw_texture(
+                                        &images.textures[11],
+                                        i as i32 * POS,
+                                        j as i32 * POS,
+                                        Color::WHITE,
+                                    ),
+                                },
+                                // d.draw_texture(&t, i as i32 * DIM, j as i32 * DIM, Color::WHITE);
+                                None => (),
+                            }
+                        } else {
+                            match pieza.tipo {
+                                Some(tipo) => match tipo {
+                                    pieza::TipoPieza::Peon => d.draw_texture(
+                                        &images.textures[0],
+                                        i as i32 * POS,
+                                        j as i32 * POS,
+                                        Color::WHITE,
+                                    ),
+                                    pieza::TipoPieza::Alfil => d.draw_texture(
+                                        &images.textures[1],
+                                        i as i32 * POS,
+                                        j as i32 * POS,
+                                        Color::WHITE,
+                                    ),
+                                    pieza::TipoPieza::Caballo => d.draw_texture(
+                                        &images.textures[2],
+                                        i as i32 * POS,
+                                        j as i32 * POS,
+                                        Color::WHITE,
+                                    ),
+                                    pieza::TipoPieza::Torre => d.draw_texture(
+                                        &images.textures[3],
+                                        i as i32 * POS,
+                                        j as i32 * POS,
+                                        Color::WHITE,
+                                    ),
+                                    pieza::TipoPieza::Rey => d.draw_texture(
+                                        &images.textures[4],
+                                        i as i32 * POS,
+                                        j as i32 * POS,
+                                        Color::WHITE,
+                                    ),
+                                    pieza::TipoPieza::Reina => d.draw_texture(
+                                        &images.textures[5],
+                                        i as i32 * POS,
+                                        j as i32 * POS,
+                                        Color::WHITE,
+                                    ),
+                                },
+                                // d.draw_texture(&t, i as i32 * DIM, j as i32 * DIM, Color::WHITE);
+                                None => (),
+                            }
+                        }
+                        // d.draw_texture(&t, i as i32 * DIM, j as i32 * DIM, Color::WHITE);
+                        // d.draw_text(&f, i as i32 * DIM, j as i32 * DIM, 5, c);
                     }
                     None => {
                         d.draw_rectangle(i as i32 * DIM, j as i32 * DIM, DIM, DIM, b);
-                        d.draw_text("Vacia", i as i32 * DIM, j as i32 * DIM, 5, c)
+                        d.draw_text(
+                            &format!("Vacia {}{}", i, j),
+                            i as i32 * DIM,
+                            j as i32 * DIM,
+                            5,
+                            c,
+                        );
                     }
                 }
             }
