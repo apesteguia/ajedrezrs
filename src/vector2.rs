@@ -18,4 +18,16 @@ where
     pub fn igual(&self, v: Vect2<T>) -> bool {
         self.x == v.x && self.y == v.y
     }
+
+    pub fn reverse(&mut self) {
+        let aux = self.x;
+        self.x = self.y;
+        self.y = aux;
+    }
+}
+
+impl Default for Vect2<usize> {
+    fn default() -> Self {
+        Self { x: 999, y: 999 }
+    }
 }

@@ -39,7 +39,7 @@ fn main() {
     let images = load_images::Images::new(&mut rl, &thread);
     let my_black = Color::new(70, 70, 70, 255);
     rl.set_target_fps(20);
-    let mut seleccionado: Vect2<usize> = Vect2::new(0, 0);
+    let mut seleccionado: Vect2<_> = Vect2::default();
 
     while !rl.window_should_close() {
         let mut d = rl.begin_drawing(&thread);
@@ -52,11 +52,29 @@ fn main() {
 
         if down {
             let col = check_collision(pos);
+            if seleccionado == Vect2::default() {
+                seleccionado = col;
+            }
             if !movimientos.is_empty() {
                 let yy = movimientos.iter().any(|&f| f.igual(col));
                 if yy {
-                    let piz = tablero.piezas[seleccionado.x][seleccionado.y];
+                    let piz = tablero.piezas[seleccionado.y][seleccionado.x];
+                    println!(
+                        "{:?} {:?}",
+                        piz.unwrap().color.unwrap(),
+                        piz.unwrap().tipo.unwrap()
+                    );
                     tablero.insertar_pieza(piz, col);
+                    if tablero.turno == pieza::Color::Blancas {
+                        tablero.turno = pieza::Color::Negras;
+                    } else {
+                        tablero.turno = pieza::Color::Blancas;
+                    }
+                    movimientos = Vec::new();
+                } else {
+                    if tablero.piezas[col.x][col.y].unwrap().color.unwrap() == tablero.turno {
+                        movimientos = tablero.movimientos_posibles(col).unwrap();
+                    }
                 }
             } else {
                 if tablero.piezas[col.x][col.y].unwrap().color.unwrap() == tablero.turno {
